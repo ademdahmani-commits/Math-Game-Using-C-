@@ -1,5 +1,6 @@
+# Math Game
 <h1>Math-Game-Using C++<h1>
-<h2>Steps<h2>
+<h2>Steps To Launch<h2>
 <ol>
   <li>Install C++ using any compiler</li>
   <li>Put the code </li>
