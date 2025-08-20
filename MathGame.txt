@@ -1,0 +1,377 @@
+#include <iostream>
+#include <windows.h>
+using namespace std;
+
+struct stGame {
+	short QuestionsNumberAsk = 0; 
+	short Level = 0 ;
+	short Level2 = 0;
+	short Result = 0;
+	char RandomOp = 0;
+	short QuestionsLevel = 0;
+	int UserInfo = 0;
+	bool CheckInfo = 0;
+	short num = 0;
+	short RightCounter = 0;
+	short WrongCounter = 0;
+	short UserOperationType = 2;
+	char AskGameRepeat = 0;
+};
+enum enQuestionLevel {Easy = 1 , Medieum = 2 , Hard = 3 , Mix = 4};
+enum enOpType { Add = 1, Sub = 2, Mul = 3, Div = 4 , mix = 5 };
+
+int RandNum(int from , int to) {
+	int RD = rand() % (to - from + 1) + from;
+	return RD;
+}
+void Title() {
+	cout << "-------------------------------------------------------" << "\n" << endl;
+	cout << "                 Welcome to Math Game                  " << "\n" << endl;
+	cout << "-------------------------------------------------------" << endl;
+
+}
+
+char OpTypes(char ROP[4]) {
+	ROP[0] = '+';
+	ROP[1] = '-';
+	ROP[2] = '*';
+	ROP[3] = '/';
+	return ROP[4];
+}
+void swap(int& A, int& B) {
+	int temp;
+	temp = A;
+	A = B;
+	B = temp;
+}
+stGame GetRandNumFromArray(stGame &game , char ROP[4]) { 
+	for (int i = 0; i < 4; i++)
+
+		  swap(ROP[RandNum(1, 4) - 1], ROP[RandNum(1, 4) - 1]);
+	game.RandomOp = ROP[1]; 
+		  return game;
+
+}
+
+stGame QuestionNumberAsker()    
+{
+	stGame AskInfo ;
+	cout << "Pls enter how many rounds you want to play: ";
+	cin >> AskInfo.QuestionsNumberAsk;
+
+	while (AskInfo.QuestionsNumberAsk > 100 || AskInfo.QuestionsNumberAsk < 1) {
+		cout << "Please enter a number between 1 and 100: ";
+		cin >> AskInfo.QuestionsNumberAsk;
+	}
+	return AskInfo;
+}
+enQuestionLevel QuestionLevelAsker(stGame &game) {
+	
+	cout << "Pls enter Questions level [1]Easy , [2]Medieum , [3]Hard , [4]Mix: ";
+	cin >> game.QuestionsLevel;
+	while (game.QuestionsLevel > 4 || game.QuestionsLevel < 1) {
+		cout << "Please enter a number between 1 and 4: ";
+		cin >> game.QuestionsLevel;
+	}
+
+	switch (game.QuestionsLevel)
+	{
+	case 1:
+			return enQuestionLevel::Easy; 
+			break;
+	case 2:
+		return enQuestionLevel::Medieum;
+		break;
+	case 3:
+		return enQuestionLevel::Hard;
+		break;
+	case 4:
+		return enQuestionLevel::Mix;
+		break;
+	} 
+	
+
+}
+enOpType OpTypeAsker(stGame &game) {
+	game.UserOperationType = 0;
+	cout << "Pls enter Questions Type [1]Add , [2]Sub , [3]Mul , [4]Div , [5]Mix: ";
+	cin >> game.UserOperationType;
+	while (game.UserOperationType > 5 || game.UserOperationType < 1) {
+		cout << "Please enter a number between 1 and 5: ";
+		cin >> game.UserOperationType;
+	}
+
+	switch (game.UserOperationType)
+	{
+	case 1:
+		return enOpType::Add;
+		break;
+	case 2:
+		return enOpType::Sub;
+		break;
+	case 3:
+		return enOpType::Mul;
+		break;
+	case 4:
+		return enOpType::Div;
+		break;
+	case 5:
+		return enOpType::mix;
+		break;
+	}
+}
+
+stGame QuestionLevels(stGame &game , enQuestionLevel QuestionsLevel) {
+	if (QuestionsLevel == 1) {
+		game.Level = RandNum(1, 10);
+		game.Level2 = RandNum(1, 10);
+	}
+		
+	else if (QuestionsLevel == 2) {
+		game.Level = RandNum(20, 40);
+		game.Level2 = RandNum(20, 40);
+	}
+	else if (QuestionsLevel == 3) {
+		game.Level = RandNum(80, 200);
+		game.Level2 = RandNum(80, 200);
+	}
+	else if (QuestionsLevel == 4) {
+		game.Level = RandNum(1, 200);
+		game.Level2 = RandNum(1, 200);
+	}
+	return game;
+		
+}
+stGame OpType(stGame game , enOpType ResultReturn , char ROP[4]) {
+	
+	if (ResultReturn == 1) {
+		 game.Result = game.Level + game.Level2;
+	}
+	else if (ResultReturn == 2) {
+		 game.Result = game.Level - game.Level2;
+		
+	}
+	else if (ResultReturn == 3) {
+		 game.Result = game.Level * game.Level2;
+		
+	}
+	else if (ResultReturn == 4) {
+		 game.Result = game.Level / game.Level2;
+		
+	}
+	if (ResultReturn == 5) {
+		
+		switch (game.RandomOp) {
+		case '+':
+			game.Result = game.Level + game.Level2;
+			break;
+		case '-':
+			game.Result = game.Level - game.Level2;
+			break;
+		case '*':
+			game.Result = game.Level * game.Level2;
+			break;
+		case '/':
+			game.Result = game.Level / game.Level2;
+			break;
+		default:
+			cout << "error"	;
+		}
+	
+	}
+	return game;
+}
+
+void QuestionTab(stGame game) {
+	cout << "-------------------------------------------------------" << endl;
+	cout << "Question [" << game.num << "/" << game.QuestionsNumberAsk << "]" << endl;
+	cout << "-------------------------------------------------------" << endl;
+}
+stGame QuestionPrinter(stGame &game , enOpType ResultReturn , char ROP[4]) {
+	cout << game.Level << endl;
+	switch (ResultReturn) {
+	case 1: cout << "   + " << endl; break;
+	case 2: cout << "   - " << endl; break;
+	case 3: cout << "   * " << endl; break;
+	case 4: cout << "   / " << endl; break;
+	case 5: cout << game.RandomOp << endl; break;
+	default:
+		cout << "error" << endl;
+	}
+
+	cout << game.Level2 << endl;
+	cout << "--------" << endl;
+	cout << "= ";
+	cin >> game.UserInfo; 
+	
+		return game;
+	
+}
+bool CheckUserInfo(stGame game) {
+	if (game.UserInfo == game.Result)
+		return 1;
+	else 
+		return 0;
+}
+void BackColorAndRingtones(stGame game) {
+	if (CheckUserInfo(game) == 1) {
+		system("color 27");
+	}
+	else
+	{
+		system("color 47");
+		Beep(750, 300);
+	}
+}
+void ShowResult(stGame game) { 
+	bool CUI = CheckUserInfo(game);
+	if (CUI == 0) {
+		cout << "Wrong answer [X] " << endl;
+		cout << "The Right Answer Is: " << game.Result << endl;
+	}
+	else
+		cout << "Right Answer ;D" <<endl;
+}
+void RightAndWrongCounter(stGame &game) {
+	bool check = CheckUserInfo(game);
+	if (check == 1)
+		game.RightCounter += 1;
+	else
+		game.WrongCounter += 1;
+}
+void FinalResultAndScore(stGame game) {
+	if (game.RightCounter > game.WrongCounter) {
+		system("color 27");
+		cout << "-------------------------------------------------------" << endl;
+		cout << "Final Result is [Pass] with Score: " << game.RightCounter << "/" << game.QuestionsNumberAsk << endl;
+		cout << "-------------------------------------------------------" << endl;
+	}
+	else if (game.RightCounter < game.WrongCounter){
+		system("color 47");
+		cout << "-------------------------------------------------------" << endl;
+		cout << "Final Result is [Fail] with Score: " << game.RightCounter << "/" << game.QuestionsNumberAsk << endl;
+		cout << "-------------------------------------------------------" << endl;
+	}
+	else {
+		system("color 6F");
+		cout << "-------------------------------------------------------" << endl;
+		cout << "Final Result is [Half] with Score: " << game.RightCounter << "/" << game.QuestionsNumberAsk << endl;
+		cout << "-------------------------------------------------------" << endl;
+	}
+		
+
+}
+void TotalResultPrint(stGame game) {
+	
+	cout << "NumberOfQuestions: " << game.QuestionsNumberAsk << endl;
+	switch (game.QuestionsLevel) {
+	case 1: 
+		cout << "Question Level: " << "Easy" << endl;
+		break;
+	case 2:
+		cout << "Question Level: " << "Medium" << endl;
+		break;
+	case 3:
+		cout << "Question Level: " << "Hard" << endl;
+		break;
+	case 4:
+		cout << "Question Level: " << "Mix" << endl;
+		break;
+
+	}
+	switch (game.UserOperationType) {
+	case 1:
+		cout << "OpType is: +" << endl;
+		break;
+	case 2:
+		cout << "OpType is: -" << endl;
+		break;
+	case 3:
+		cout << "OpType is: *" << endl;
+		break;
+	case 4:
+		cout << "OpType is: /" << endl;
+		break;
+	case 5:
+		cout << "OpType is: Mix" << endl;
+		break;
+	}
+	
+
+	cout << "Right Answers: " << game.RightCounter << endl;
+	cout << "Wrong Answers: " << game.WrongCounter << endl;
+	cout << "-------------------------------------------------------" << endl;
+}
+void ThanksTab() {
+	cout << "-------------------------------------------------------" << endl;
+	cout << "                  thank you for Playing                " << endl;
+	cout << "-------------------------------------------------------" << endl;
+}
+void GameQuestionsNumber(stGame game , enOpType ResultReturn , enQuestionLevel QuestionsLevel , char ROP[10]) {
+	for (int i = 0; i < game.QuestionsNumberAsk; i++) {
+		game.num++;
+		QuestionTab(game);
+		QuestionLevels(game, QuestionsLevel);
+		GetRandNumFromArray(game, ROP);
+		game = QuestionPrinter(game, ResultReturn , ROP);
+		game = OpType(game, ResultReturn ,ROP);
+		BackColorAndRingtones(game);
+		BackColorAndRingtones(game);
+		ShowResult(game);
+		RightAndWrongCounter(game);
+	}
+	FinalResultAndScore(game); 
+	TotalResultPrint(game);
+}
+stGame AskRepeat(stGame &game) {
+	cout << "D u want to play more roundes?: Yes(Y) NO(N)";
+	cin >> game.AskGameRepeat;
+	while (game.AskGameRepeat != 'y' && game.AskGameRepeat != 'n') {
+		cout << "Pls enter yes or no only: Yes(Y) NO(N)";
+		cin >> game.AskGameRepeat;
+	}
+	if (game.AskGameRepeat == 'n') {
+		ThanksTab();
+	}
+		return game;
+}
+void ClearGame() {
+	system("color 0F");
+	system("cls");
+}
+stGame repeat(stGame game) {
+	while (game.AskGameRepeat == 'y' && game.AskGameRepeat != 'n' ) {
+		
+		char ROP[4];
+		OpTypes(ROP);
+		ClearGame();
+		game = QuestionNumberAsker();
+		enQuestionLevel QuestionsLevel = QuestionLevelAsker(game);
+		enOpType ResultReturn = OpTypeAsker(game);
+		GameQuestionsNumber(game, ResultReturn, QuestionsLevel, ROP);
+		AskRepeat(game);
+	}
+	return game;
+}
+
+
+void StartGame() {
+	stGame game;
+	char ROP[4];
+	OpTypes(ROP);
+	Title();
+	game = QuestionNumberAsker();
+	enQuestionLevel QuestionsLevel = QuestionLevelAsker(game);
+	enOpType ResultReturn = OpTypeAsker(game);
+	GameQuestionsNumber(game, ResultReturn, QuestionsLevel, ROP);
+	AskRepeat(game);
+	repeat(game); 
+	
+}
+int main()
+{
+	srand((unsigned)time(0)); 
+	StartGame();
+
+}
+
